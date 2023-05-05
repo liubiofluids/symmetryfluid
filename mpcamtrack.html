@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      table {
+	  font-family: arial, sans-serif;
+	  border-collapse: collapse;
+	  width: 100%;
+      }
+      td, th {
+	  border: 1px solid #dddddd;
+	  text-align: left;
+	  padding: 8px;
+      }
+      tr:nth-child(even) {
+	  background-color: #dddddd;
+      }
+      .range {
+	  @at-root {
+	      &__slider {
+		  -webkit-appearance: none;
+		  -moz-appearance: none;
+		  appearance: none;
+		  margin: .4em 0;
+		  &:focus {
+		      outline: none;
+		  }
+
+		  &::-webkit-slider-runnable-track {
+		      background-color: #444444;
+		      height: .3em;
+		      margin: .4em 0;
+		      border-radius: 2px;
+		  }
+		  &::-moz-range-track {
+		      background-color: #444444;
+		      height: .3em;
+		      border-radius: 2px;
+		  }
+		  &::-moz-focus-outer{
+		      border: 0;
+		  }
+		  &::-ms-track {
+		      background-color: #444444;
+		      height: .3em;
+		      margin: .1em 0;
+		      border-radius: 2px;
+		  }
+
+		  &::-webkit-slider-thumb {
+		      -webkit-appearance: none;
+		      -moz-appearance: none;
+		      appearance: none;
+		      background-color: #fff;
+      		      text-align: center;
+      		      width: 1.2em;
+      		      height: 1.2em;
+      		      border: 1px solid #cccccc;
+      		      border-radius: 50%;
+      		      cursor: pointer;
+      		      box-sizing: border-box;
+		      margin-top: -0.5em;
+		  }
+		  &::-moz-range-thumb {
+		      -webkit-appearance: none;
+		      -moz-appearance: none;
+		      appearance: none;
+		      background-color: #fff;
+      		      text-align: center;
+      		      width: 1.2em;
+      		      height: 1.2em;
+      		      border: 1px solid #cccccc;
+      		      border-radius: 50%;
+      		      cursor: pointer;
+      		      box-sizing: border-box;
+		  }
+		  &::-ms-thumb {
+		      margin: 0;
+		  }
+	      }
+
+	  }
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <caption>Pressure box readout
+      </caption>
+      <tr>
+	<th>Box
+	</th>
+	<th>P1
+	</th>
+	<th>P2
+	</th>
+	<th>P3
+	</th>
+	<th>P4
+	</th>
+      </tr>
+      <tr>
+	<td>Left
+	</td>
+	<td id="lp1">0.00
+	</td>
+	<td id="lp2">0.00
+	</td>
+	<td id="lp3">0.00
+	</td>
+	<td id="lp4">0.00
+	</td>
+      </tr>
+      <tr>
+	<td>Right
+	</td>
+	<td id="rp1">0.00
+	</td>
+	<td id="rp2">0.00
+	</td>
+	<td id="rp3">0.00
+	</td>
+	<td id="rp4">0.00
+	</td>
+      </tr>
+    </table>
+    <table>
+      <caption>Pressure box base
+      </caption>
+      <tr>
+	<th>Box
+	</th>
+	<th>P1
+	</th>
+	<th>P2
+	</th>
+	<th>P3
+	</th>
+	<th>P4
+	</th>
+      </tr>
+      <tr>
+	<td>Left
+	</td>
+	<td>
+	  <form>
+	    <div class='range'>
+	      <input class='range__slider' id='lpb1sl' max='100' min='-100' step='0.01' oninput='lpb1am.value=lpb1sl.value' type='range' value='0.00'>
+	      <input class='range__amount' id='lpb1am' oninput='lpb1sl.value=lpb1am.value' type='text' value='0'>
+	    </div>
+	  </form>
+	</td>
+	<td id="lpb2">0.00
+	</td>
+	<td id="lpb3">0.00
+	</td>
+	<td id="lpb4">0.00
+	</td>
+      </tr>
+      <tr>
+	<td>Right
+	</td>
+	<td id="rpb1">0.00
+	</td>
+	<td id="rpb2">0.00
+	</td>
+	<td id="rpb3">0.00
+	</td>
+	<td id="rpb4">0.00
+	</td>
+      </tr>
+    </table>
+  </body>
+</html>
