@@ -150,9 +150,21 @@
 	    </div>
 	  </form>
 	</td>
-	<td id="lpb2">0.00
+	<td>
+    <form>
+	    <div class='range'>
+	      <input class='range__slider' id='lpb2sl' max='100' min='-100' step='0.01' oninput='lpb2am.value=lpb2sl.value' type='range' value='0.00'>
+	      <input class='range__amount' id='lpb2am' oninput='lpb2sl.value=lpb2am.value' type='text' value='0'>
+	    </div>
+	  </form>
 	</td>
-	<td id="lpb3">0.00
+	<td>
+    <form>
+	    <div class='range'>
+	      <input class='range__slider' id='lpb3sl' max='100' min='-100' step='0.01' oninput='lpb3am.value=lpb3sl.value' type='range' value='0.00'>
+	      <input class='range__amount' id='lpb3am' oninput='lpb3sl.value=lpb3am.value' type='text' value='0'>
+	    </div>
+	  </form>
 	</td>
 	<td id="lpb4">0.00
 	</td>
