@@ -1,715 +1,1079 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <style>
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        table-layout: fixed;
-      }
-      td,
-      th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-      tr:nth-child(even) {
-        background-color: #dddddd;
-      }
-      .range {
-        @at-root {
-          &__slider {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            margin: 0.4em 0;
-            &:focus {
-              outline: none;
-            }
-
-            &::-webkit-slider-runnable-track {
-              background-color: #444444;
-              height: 0.3em;
-              margin: 0.4em 0;
-              border-radius: 2px;
-            }
-            &::-moz-range-track {
-              background-color: #444444;
-              height: 0.3em;
-              border-radius: 2px;
-            }
-            &::-moz-focus-outer {
-              border: 0;
-            }
-            &::-ms-track {
-              background-color: #444444;
-              height: 0.3em;
-              margin: 0.1em 0;
-              border-radius: 2px;
-            }
-
-            &::-webkit-slider-thumb {
-              -webkit-appearance: none;
-              -moz-appearance: none;
-              appearance: none;
-              background-color: #fff;
-              text-align: center;
-              width: 1.2em;
-              height: 1.2em;
-              border: 1px solid #cccccc;
-              border-radius: 50%;
-              cursor: pointer;
-              box-sizing: border-box;
-              margin-top: -0.5em;
-            }
-            &::-moz-range-thumb {
-              -webkit-appearance: none;
-              -moz-appearance: none;
-              appearance: none;
-              background-color: #fff;
-              text-align: center;
-              width: 1.2em;
-              height: 1.2em;
-              border: 1px solid #cccccc;
-              border-radius: 50%;
-              cursor: pointer;
-              box-sizing: border-box;
-            }
-            &::-ms-thumb {
-              margin: 0;
-            }
-          }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
         }
-      }
+
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
+        .range {
+            @at-root {
+                &__slider {
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+                    appearance: none;
+                    margin: 0.4em 0;
+
+                    &:focus {
+                        outline: none;
+                    }
+
+                    &::-webkit-slider-runnable-track {
+                        background-color: #444444;
+                        height: 0.3em;
+                        margin: 0.4em 0;
+                        border-radius: 2px;
+                    }
+
+                    &::-moz-range-track {
+                        background-color: #444444;
+                        height: 0.3em;
+                        border-radius: 2px;
+                    }
+
+                    &::-moz-focus-outer {
+                        border: 0;
+                    }
+
+                    &::-ms-track {
+                        background-color: #444444;
+                        height: 0.3em;
+                        margin: 0.1em 0;
+                        border-radius: 2px;
+                    }
+
+                    &::-webkit-slider-thumb {
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        appearance: none;
+                        background-color: #fff;
+                        text-align: center;
+                        width: 1.2em;
+                        height: 1.2em;
+                        border: 1px solid #cccccc;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        box-sizing: border-box;
+                        margin-top: -0.5em;
+                    }
+
+                    &::-moz-range-thumb {
+                        -webkit-appearance: none;
+                        -moz-appearance: none;
+                        appearance: none;
+                        background-color: #fff;
+                        text-align: center;
+                        width: 1.2em;
+                        height: 1.2em;
+                        border: 1px solid #cccccc;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        box-sizing: border-box;
+                    }
+
+                    &::-ms-thumb {
+                        margin: 0;
+                    }
+                }
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <table>
-      <caption>
-        Pump controls
-      </caption>
-      <td>
-        <input type="radio" id="pumpon" name="pumpstatus" value="1" />
-        <label for="pumpon">Pump On</label>
-        <input type="radio" id="pumpoff" name="pumpstatus" value="0" checked />
-        <label for="pumpoff">Off</label>
-      </td>
-      <td>
-        <label>Max |p| </label>
-        <form>
-          <div class="range">
-            <input
-              class="range__slider"
-              id="maxabspsl"
-              max="1000"
-              min="0.00"
-              step="0.01"
-              oninput="maxabspam.value=maxabspsl.value"
-              type="range"
-              value="200.00"
-            />
-            <input
-              class="range__amount"
-              id="maxabspam"
-              oninput="maxabspsl.value=maxabspam.value"
-              type="text"
-              value="200.00"
-            />
-          </div>
-        </form>
-      </td>
+        <caption>
+            Pump controls
+        </caption>
+        <tr>
+            <th>
+                Pump Active
+            </th>
+            <th>
+                Pump Max
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" id="pumpon" name="pumpstatus" value="1" />
+                <label for="pumpon">Pump On
+                </label>
+                <input type="radio" id="pumpoff" name="pumpstatus" value="0" checked />
+                <label for="pumpoff">Off
+                </label>
+            </td>
+            <td>
+                <label>Max |p|
+                </label>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="maxabspsl" max="1000" min="0.00" step="0.01"
+                            oninput="maxabspam.value=maxabspsl.value" type="range" value="200.00" />
+                        <input class="range__amount" id="maxabspam" oninput="maxabspsl.value=maxabspam.value"
+                            type="text" value="200.00" />
+                    </div>
+                </form>
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Port assignments
-      </caption>
-      <tr>
-        <th>Box</th>
-        <th>P1</th>
-        <th>P2</th>
-        <th>P3</th>
-        <th>P4</th>
-      </tr>
-      <tr>
-        <td>Left</td>
-        <td>
-          <select name="groupportl1" id="portl1box">
-            <option value="1" selected>1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupport12" id="portl2box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupportl3" id="portl3box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7" selected>7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupportl4" id="portl4box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5" selected>5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td>Right</td>
-        <td>
-          <select name="groupportr1" id="portr1box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4" selected>4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupportr2" id="portr2box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8" selected>8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupportr3" id="portr3box">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6" selected>6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-        <td>
-          <select name="groupportr4" id="portr4box">
-            <option value="1">1</option>
-            <option value="2" selected>2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </td>
-      </tr>
+        <caption>
+            Stage position
+        </caption>
+        <tr>
+            <th>
+                Stage Active
+            </th>
+            <th>
+                Stage X Read
+            </th>
+            <th>
+                Stage Y Read
+            </th>
+            <th>
+                Stage X Set
+            </th>
+            <th>
+                Stage Y Set
+            </th>
+            <th>
+                Stage Update
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" id="stageon" name="stagestatus" value="1" />
+                <label for="stageon">Stage On
+                </label>
+                <input type="radio" id="stageoff" name="stagestatus" value="0" checked />
+                <label for="stageoff">Off
+                </label>
+            </td>
+            <td style="text-align: right" id="sxr">0
+            </td>
+            <td style="text-align: right" id="syr">0
+            </td>
+            <td>
+                <input id="sxs" type="text" value="0" />
+            </td>
+            <td>
+                <input id="sys" type="text" value="0" />
+            </td>
+            <td>
+                <input type="radio" id="stageupdateon" name="stageupdate" value="1" />
+                <label for="stageupdateon">Update On
+                </label>
+                <input type="radio" id="stageupdateoff" name="stageupdate" value="0" checked />
+                <label for="stageupdateoff">Off
+                </label>
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Pressure box readout
-      </caption>
-      <tr>
-        <th>Box</th>
-        <th>P1</th>
-        <th>P2</th>
-        <th>P3</th>
-        <th>P4</th>
-      </tr>
-      <tr>
-        <td>Left</td>
-        <td style="text-align: right" id="lp1">0.00</td>
-        <td style="text-align: right" id="lp2">0.00</td>
-        <td style="text-align: right" id="lp3">0.00</td>
-        <td style="text-align: right" id="lp4">0.00</td>
-      </tr>
-      <tr>
-        <td>Right</td>
-        <td style="text-align: right" id="rp1">0.00</td>
-        <td style="text-align: right" id="rp2">0.00</td>
-        <td style="text-align: right" id="rp3">0.00</td>
-        <td style="text-align: right" id="rp4">0.00</td>
-      </tr>
+        <caption>
+            Port assignments
+        </caption>
+        <tr>
+            <th>Box
+            </th>
+            <th>P1
+            </th>
+            <th>P2
+            </th>
+            <th>P3
+            </th>
+            <th>P4
+            </th>
+        </tr>
+        <tr>
+            <td>Left
+            </td>
+            <td>
+                <select name="groupportl1" id="portl1box">
+                    <option value="1" selected>1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupport12" id="portl2box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3" selected>3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupportl3" id="portl3box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7" selected>7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupportl4" id="portl4box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5" selected>5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Right
+            </td>
+            <td>
+                <select name="groupportr1" id="portr1box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4" selected>4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupportr2" id="portr2box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8" selected>8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupportr3" id="portr3box">
+                    <option value="1">1
+                    </option>
+                    <option value="2">2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6" selected>6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+            <td>
+                <select name="groupportr4" id="portr4box">
+                    <option value="1">1
+                    </option>
+                    <option value="2" selected>2
+                    </option>
+                    <option value="3">3
+                    </option>
+                    <option value="4">4
+                    </option>
+                    <option value="5">5
+                    </option>
+                    <option value="6">6
+                    </option>
+                    <option value="7">7
+                    </option>
+                    <option value="8">8
+                    </option>
+                </select>
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Pressure box base
-      </caption>
-      <tr>
-        <th>Box</th>
-        <th>P1</th>
-        <th>P2</th>
-        <th>P3</th>
-        <th>P4</th>
-      </tr>
-      <tr>
-        <td>Left</td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="lpb1sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="lpb1am.value=lpb1sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="lpb1am"
-                oninput="lpb1sl.value=lpb1am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="lpb2sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="lpb2am.value=lpb2sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="lpb2am"
-                oninput="lpb2sl.value=lpb2am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="lpb3sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="lpb3am.value=lpb3sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="lpb3am"
-                oninput="lpb3sl.value=lpb3am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="lpb4sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="lpb4am.value=lpb4sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="lpb4am"
-                oninput="lpb4sl.value=lpb4am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-      </tr>
-      <tr>
-        <td>Right</td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="rpb1sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="rpb1am.value=rpb1sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="rpb1am"
-                oninput="rpb1sl.value=rpb1am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="rpb2sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="rpb2am.value=rpb2sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="rpb2am"
-                oninput="rpb2sl.value=rpb2am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="rpb3sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="rpb3am.value=rpb3sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="rpb3am"
-                oninput="rpb3sl.value=rpb3am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="rpb4sl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="rpb4am.value=rpb4sl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="rpb4am"
-                oninput="rpb4sl.value=rpb4am.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-      </tr>
+        <caption>
+            Pressure box readout
+        </caption>
+        <tr>
+            <th>Box
+            </th>
+            <th>P1
+            </th>
+            <th>P2
+            </th>
+            <th>P3
+            </th>
+            <th>P4
+            </th>
+        </tr>
+        <tr>
+            <td>Left
+            </td>
+            <td style="text-align: right" id="lp1">0.00
+            </td>
+            <td style="text-align: right" id="lp2">0.00
+            </td>
+            <td style="text-align: right" id="lp3">0.00
+            </td>
+            <td style="text-align: right" id="lp4">0.00
+            </td>
+        </tr>
+        <tr>
+            <td>Right
+            </td>
+            <td style="text-align: right" id="rp1">0.00
+            </td>
+            <td style="text-align: right" id="rp2">0.00
+            </td>
+            <td style="text-align: right" id="rp3">0.00
+            </td>
+            <td style="text-align: right" id="rp4">0.00
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Mode controls
-      </caption>
-      <tr>
-        <th>X mode</th>
-        <th>Y mode</th>
-        <th>Z mode</th>
-      </tr>
-      <tr>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="xmodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="xmodeam.value=xmodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="xmodeam"
-                oninput="xmodesl.value=xmodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="ymodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="ymodeam.value=ymodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="ymodeam"
-                oninput="ymodesl.value=ymodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="zmodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="zmodeam.value=zmodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="zmodeam"
-                oninput="zmodesl.value=zmodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-      </tr>
-      <tr>
-        <th>Bias mode</th>
-        <th>Op X mode</th>
-        <th>Op Y mode</th>
-      </tr>
-      <tr>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="bmodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="bmodeam.value=bmodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="bmodeam"
-                oninput="bmodesl.value=bmodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="opxmodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="opxmodeam.value=opxmodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="opxmodeam"
-                oninput="opxmodesl.value=opxmodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-        <td>
-          <form>
-            <div class="range">
-              <input
-                class="range__slider"
-                id="opymodesl"
-                max="100"
-                min="-100"
-                step="0.01"
-                oninput="opymodeam.value=opymodesl.value"
-                type="range"
-                value="0.00"
-              />
-              <input
-                class="range__amount"
-                id="opymodeam"
-                oninput="opymodesl.value=opymodeam.value"
-                type="text"
-                value="0"
-              />
-            </div>
-          </form>
-        </td>
-      </tr>
+        <caption>
+            Pressure box base
+        </caption>
+        <tr>
+            <th>Box
+            </th>
+            <th>P1
+            </th>
+            <th>P2
+            </th>
+            <th>P3
+            </th>
+            <th>P4
+            </th>
+        </tr>
+        <tr>
+            <td>Left
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb1sl" max="100" min="-100" step="0.01"
+                            oninput="lpb1am.value=lpb1sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="lpb1am" oninput="lpb1sl.value=lpb1am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb2sl" max="100" min="-100" step="0.01"
+                            oninput="lpb2am.value=lpb2sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="lpb2am" oninput="lpb2sl.value=lpb2am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb3sl" max="100" min="-100" step="0.01"
+                            oninput="lpb3am.value=lpb3sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="lpb3am" oninput="lpb3sl.value=lpb3am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb4sl" max="100" min="-100" step="0.01"
+                            oninput="lpb4am.value=lpb4sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="lpb4am" oninput="lpb4sl.value=lpb4am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Right
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb1sl" max="100" min="-100" step="0.01"
+                            oninput="rpb1am.value=rpb1sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="rpb1am" oninput="rpb1sl.value=rpb1am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb2sl" max="100" min="-100" step="0.01"
+                            oninput="rpb2am.value=rpb2sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="rpb2am" oninput="rpb2sl.value=rpb2am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb3sl" max="100" min="-100" step="0.01"
+                            oninput="rpb3am.value=rpb3sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="rpb3am" oninput="rpb3sl.value=rpb3am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb4sl" max="100" min="-100" step="0.01"
+                            oninput="rpb4am.value=rpb4sl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="rpb4am" oninput="rpb4sl.value=rpb4am.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Crunch controls
-      </caption>
-      <td>
-        <input type="radio" id="crunchon" name="crunchstatus" value="1" />
-        <label for="crunchon">Crunch On</label>
-        <input
-          type="radio"
-          id="crunchoff"
-          name="crunchstatus"
-          value="0"
-          checked
-        />
-        <label for="crunchoff">Off</label>
-      </td>
+        <caption>
+            Pressure box port scaling
+        </caption>
+        <tr>
+            <th>Box
+            </th>
+            <th>P1
+            </th>
+            <th>P2
+            </th>
+            <th>P3
+            </th>
+            <th>P4
+            </th>
+        </tr>
+        <tr>
+            <td>Left
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb1ssl" max="100" min="0" step="0.01"
+                            oninput="lpb1am.value=lpb1ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="lpb1sam" oninput="lpb1ssl.value=lpb1sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb2ssl" max="100" min="0" step="0.01"
+                            oninput="lpb2sam.value=lpb2ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="lpb2sam" oninput="lpb2ssl.value=lpb2sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb3ssl" max="100" min="0" step="0.01"
+                            oninput="lpb3sam.value=lpb3ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="lpb3sam" oninput="lpb3ssl.value=lpb3sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="lpb4ssl" max="100" min="0" step="0.01"
+                            oninput="lpb4sam.value=lpb4ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="lpb4sam" oninput="lpb4ssl.value=lpb4sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>Right
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb1ssl" max="100" min="0" step="0.01"
+                            oninput="rpb1sam.value=rpb1ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="rpb1sam" oninput="rpb1ssl.value=rpb1sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb2ssl" max="100" min="0" step="0.01"
+                            oninput="rpb2sam.value=rpb2ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="rpb2sam" oninput="rpb2ssl.value=rpb2sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb3ssl" max="100" min="0" step="0.01"
+                            oninput="rpb3sam.value=rpb3ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="rpb3sam" oninput="rpb3ssl.value=rpb3sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="rpb4ssl" max="100" min="0" step="0.01"
+                            oninput="rpb4sam.value=rpb4ssl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="rpb4sam" oninput="rpb4ssl.value=rpb4sam.value" type="text"
+                            value="1.00" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <caption>
+            Mode controls
+        </caption>
+        <tr>
+            <th>X mode
+            </th>
+            <th>Y mode
+            </th>
+            <th>Z mode
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="xmodesl" max="100" min="-100" step="0.01"
+                            oninput="xmodeam.value=xmodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="xmodeam" oninput="xmodesl.value=xmodeam.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="ymodesl" max="100" min="-100" step="0.01"
+                            oninput="ymodeam.value=ymodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="ymodeam" oninput="ymodesl.value=ymodeam.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="zmodesl" max="100" min="-100" step="0.01"
+                            oninput="zmodeam.value=zmodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="zmodeam" oninput="zmodesl.value=zmodeam.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <th>Bias mode
+            </th>
+            <th>Op X mode
+            </th>
+            <th>Op Y mode
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="bmodesl" max="100" min="-100" step="0.01"
+                            oninput="bmodeam.value=bmodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="bmodeam" oninput="bmodesl.value=bmodeam.value" type="text"
+                            value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="opxmodesl" max="100" min="-100" step="0.01"
+                            oninput="opxmodeam.value=opxmodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="opxmodeam" oninput="opxmodesl.value=opxmodeam.value"
+                            type="text" value="0" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="opymodesl" max="100" min="-100" step="0.01"
+                            oninput="opymodeam.value=opymodesl.value" type="range" value="0.00" />
+                        <input class="range__amount" id="opymodeam" oninput="opymodesl.value=opymodeam.value"
+                            type="text" value="0" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <caption>
+            Mode scaling
+        </caption>
+        <tr>
+            <th>X mode
+            </th>
+            <th>Y mode
+            </th>
+            <th>Z mode
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="xmodescalesl" max="20" min="0" step="0.01"
+                            oninput="xmodescaleam.value=xmodescalesl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="xmodescaleam" oninput="xmodescalesl.value=xmodescaleam.value"
+                            type="text" value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="ymodescalesl" max="20" min="0" step="0.01"
+                            oninput="ymodescaleam.value=ymodescalesl.value" type="range" value="0.75" />
+                        <input class="range__amount" id="ymodescaleam" oninput="ymodescalesl.value=ymodescaleam.value"
+                            type="text" value="0.75" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="zmodescalesl" max="20" min="0" step="0.01"
+                            oninput="zmodescaleam.value=zmodescalesl.value" type="range" value="3.846" />
+                        <input class="range__amount" id="zmodescaleam" oninput="zmodescalesl.value=zmodescaleam.value"
+                            type="text" value="3.846" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <caption>
+            Crunch controls
+        </caption>
+        <tr>
+            <th>Crunching Active
+            </th>
+            <th>Crunch Custom Mode Active
+            </th>
+            <th>Crunch Custom Port Active
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" id="crunchon" name="crunchstatus" value="1" />
+                <label for="crunchon">Crunch On
+                </label>
+                <input type="radio" id="crunchoff" name="crunchstatus" value="0" checked />
+                <label for="crunchoff">Off
+                </label>
+            </td>
+            <td>
+                <input type="radio" id="crunchcustomon" name="crunchcustomstatus" value="1" />
+                <label for="crunchcustomon">Crunch Custom On
+                </label>
+                <input type="radio" id="crunchcustomoff" name="crunchcustomstatus" value="0" checked />
+                <label for="crunchcustomoff">Off
+                </label>
+            </td>
+            <td>
+                <input type="radio" id="crunchcustomporton" name="crunchcustomportstatus" value="1" />
+                <label for="crunchcustomporton">Crunch Custom Port On
+                </label>
+                <input type="radio" id="crunchcustomportoff" name="crunchcustomportstatus" value="0" checked />
+                <label for="crunchcustomportoff">Off
+                </label>
+            </td>
+
+        </tr>
     </table>
 
     <table>
-      <caption>
-        Crunched mode output
-      </caption>
-      <tr>
-        <th>X mode</th>
-        <th>Y mode</th>
-        <th>Z mode</th>
-      </tr>
-      <tr>
-        <td style="text-align: right" id="finalxam">0.00</td>
-        <td style="text-align: right" id="finalyam">0.00</td>
-        <td style="text-align: right" id="finalzam">0.00</td>
-      </tr>
-      <tr>
-        <th>Bias mode</th>
-        <th>Op X mode</th>
-        <th>Op Y mode</th>
-      </tr>
-      <tr>
-        <td style="text-align: right" id="finalbam">0.00</td>
-        <td style="text-align: right" id="finalopxam">0.00</td>
-        <td style="text-align: right" id="finalopyam">0.00</td>
-      </tr>
+        <caption>
+            Crunched mode output
+        </caption>
+        <tr>
+            <th>X mode
+            </th>
+            <th>Y mode
+            </th>
+            <th>Z mode
+            </th>
+        </tr>
+        <tr>
+            <td style="text-align: right" id="finalxam">0.00
+            </td>
+            <td style="text-align: right" id="finalyam">0.00
+            </td>
+            <td style="text-align: right" id="finalzam">0.00
+            </td>
+        </tr>
+        <tr>
+            <th>Bias mode
+            </th>
+            <th>Op X mode
+            </th>
+            <th>Op Y mode
+            </th>
+        </tr>
+        <tr>
+            <td style="text-align: right" id="finalbam">0.00
+            </td>
+            <td style="text-align: right" id="finalopxam">0.00
+            </td>
+            <td style="text-align: right" id="finalopyam">0.00
+            </td>
+        </tr>
     </table>
     <table>
-      <caption>
-        Crunch custom input
-      </caption>
-      <tr>
-        <td>
-          <textarea id="mytextcustom" placeholder="Put stuff here.">@everywhere function thefancypants!(thetime,theperiod,thefancypantsarray);end</textarea>
-      </tr>
-    <table>
-      <caption>
-        Camera controls
-      </caption>
-      <td>
-        <input type="radio" id="camon" name="camstatus" value="1" />
-        <label for="camon">Camera On</label>
-        <input type="radio" id="camoff" name="camstatus" value="0" checked />
-        <label for="camoff">Off</label>
-      </td>
-      <td>
-        <input type="radio" id="displayon" name="displaystatus" value="1" />
-        <label for="displayon">Display On</label>
-        <input
-          type="radio"
-          id="displayoff"
-          name="displaystatus"
-          value="0"
-          checked
-        />
-        <label for="displayoff">Off</label>
-      </td>
-    </table>
+        <caption>
+            Crunch custom input
+        </caption>
+        <tr>
+            <th>Crunch custom mode input
+            </th>
+            <th>Crunch custom mode scaling
+            </th>
+            <th>Crunch custom port input
+            </th>
+            <th>Crunch custom port scaling
+            </th>
+        </tr>
+        <tr>
+            <td>
+                <textarea id="mytextcustom" placeholder="Put custom mode language here."></textarea>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="custommodescalesl" max="20" min="0" step="0.01"
+                            oninput="custommodescaleam.value=custommodescalesl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="custommodescaleam"
+                            oninput="custommodescalesl.value=custommodescaleam.value" type="text" value="1.00" />
+                    </div>
+                </form>
+            </td>
+            <td>
+                <textarea id="mytextcustomport" placeholder="Put custom port language here."></textarea>
+            </td>
+            <td>
+                <form>
+                    <div class="range">
+                        <input class="range__slider" id="customportscalesl" max="20" min="0" step="0.01"
+                            oninput="customportscaleam.value=customportscalesl.value" type="range" value="1.00" />
+                        <input class="range__amount" id="customportscaleam"
+                            oninput="customportscalesl.value=customportscaleam.value" type="text" value="1.00" />
+                    </div>
+                </form>
+            </td>
+        </tr>
+        <table>
+            <caption>
+                Camera controls
+            </caption>
+            <tr>
+                <th>Camera Active
+                </th>
+                <th>Display Active
+                </th>
+                <th>Squish Display Active
+                </th>
+                <th>Squish Stack Size
+                </th>
+                <th>Squish Delay
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" id="camon" name="camstatus" value="1" />
+                    <label for="camon">Camera On
+                    </label>
+                    <input type="radio" id="camoff" name="camstatus" value="0" checked />
+                    <label for="camoff">Off
+                    </label>
+                </td>
+                <td>
+                    <input type="radio" id="displayon" name="displaystatus" value="1" />
+                    <label for="displayon">Display On
+                    </label>
+                    <input type="radio" id="displayoff" name="displaystatus" value="0" checked />
+                    <label for="displayoff">Off
+                    </label>
+                </td>
+                <td>
+                    <input type="radio" id="squishdisplayon" name="squishdisplaystatus" value="1" />
+                    <label for="squishdisplayon">Squish Display On
+                    </label>
+                    <input type="radio" id="squishdisplayoff" name="squishdisplaystatus" value="0" checked />
+                    <label for="squishdisplayoff">Off
+                    </label>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="squishstacksizesl" max="100" min="0" step="1"
+                                oninput="squishstacksizeam.value=squishstacksizesl.value" type="range" value="50" />
+                            <input class="range__amount" id="squishstacksizeam"
+                                oninput="squishstacksizesl.value=squishstacksizeam.value" type="text" value="50" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="squishdelaysl" max="20" min="0" step="0.01"
+                                oninput="squishdelayam.value=squishdelaysl.value" type="range" value="0" />
+                            <input class="range__amount" id="squishdelayam"
+                                oninput="squishdelaysl.value=squishdelayam.value" type="text" value="0" />
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
 
-    <table>
-      <caption>
-        Recording controls
-      </caption>
-      <td>
-        <input type="radio" id="recordon" name="recordstatus" value="1" />
-        <label for="recordon">Record On</label>
-        <input
-          type="radio"
-          id="recordoff"
-          name="recordstatus"
-          value="0"
-          checked
-        />
-        <label for="recordoff">Off</label>
-      </td>
-    </table>
-  </body>
+        <table>
+            <caption>
+                Recording controls
+            </caption>
+            <tr>
+                <th>Recording Active</th>
+                <th>Experimental notes</th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" id="recordon" name="recordstatus" value="1" />
+                    <label for="recordon">Record On
+                    </label>
+                    <input type="radio" id="recordoff" name="recordstatus" value="0" checked />
+                    <label for="recordoff">Off
+                    </label>
+                </td>
+                <td>
+                    <textarea id="experimentalnotes">
+60x objective
+<0.5 abb correction
+2 um Latex particles
+Mode type</textarea>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <caption>
+                Tracking controls
+            </caption>
+            <tr>
+                <th>Track Active
+                </th>
+                <th>Track Best Guess Update
+                </th>
+                <th>Track Plane X Scale
+                </th>
+                <th>Track Plane Y Scale
+                </th>
+                <th>Clip Size i
+                </th>
+                <th>Clip Size j
+                </th>
+                <th>Threshold
+                </th>
+                <th>Kernel Smoothing
+                </th>
+                <th>Track coords
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" id="trackon" name="trackstatus" value="1" />
+                    <label for="trackon">Track On
+                    </label>
+                    <input type="radio" id="trackoff" name="trackstatus" value="0" checked />
+                    <label for="trackoff">Off
+                    </label>
+                </td>
+                <td>
+                    <input type="radio" id="trackbestguesson" name="trackbestguessstatus" value="1" />
+                    <label for="trackon">Track Best Guess On
+                    </label>
+                    <input type="radio" id="trackbestguessoff" name="trackbestguessstatus" value="0" checked />
+                    <label for="trackbestguessoff">Off
+                    </label>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="trackplanescalexsl" max="20" min="-20" step="0.01"
+                                oninput="trackplanescalexam.value=trackplanescalexsl.value" type="range" value="1.00" />
+                            <input class="range__amount" id="trackplanescalexam"
+                                oninput="trackplanescalexsl.value=trackplanescalexam.value" type="text" value="1.00" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="trackplanescaleysl" max="20" min="-20" step="0.01"
+                                oninput="trackplanescaleyam.value=trackplanescaleysl.value" type="range" value="1.00" />
+                            <input class="range__amount" id="trackplanescaleyam"
+                                oninput="trackplanescaleysl.value=trackplanescaleyam.value" type="text" value="1.00" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="clipsizeisl" max="2048" min="1" step="1"
+                                oninput="clipsizeiam.value=clipsizeisl.value" type="range" value="128" />
+                            <input class="range__amount" id="clipsizeiam" oninput="clipsizeisl.value=clipsizeiam.value"
+                                type="text" value="128" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="clipsizejsl" max="2048" min="1" step="1"
+                                oninput="clipsizejam.value=clipsizejsl.value" type="range" value="128" />
+                            <input class="range__amount" id="clipsizejam" oninput="clipsizejsl.value=clipsizejam.value"
+                                type="text" value="128" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="imageanalysisthresholdsl" max="256" min="1" step="1"
+                                oninput="imageanalysisthresholdam.value=imageanalysisthresholdsl.value" type="range"
+                                value="100" />
+                            <input class="range__amount" id="imageanalysisthresholdam"
+                                oninput="imageanalysisthresholdsl.value=imageanalysisthresholdam.value" type="text"
+                                value="100" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <form>
+                        <div class="range">
+                            <input class="range__slider" id="kernelparametersl" max="20" min="0.01" step="0.01"
+                                oninput="kernelparameteram.value=kernelparametersl.value" type="range" value="3" />
+                            <input class="range__amount" id="kernelparameteram"
+                                oninput="kernelparametersl.value=kernelparameteram.value" type="text" value="3" />
+                        </div>
+                    </form>
+                </td>
+                <td>
+                    <input type="radio" id="trackxy" name="trackcoordstatus" value="1" />
+                    <label for="trackxy">xy
+                    </label>
+                    <input type="radio" id="trackyx" name="trackcoordstatus" value="0" checked />
+                    <label for="trackyx">yx
+                    </label>
+                </td>
+
+            </tr>
+        </table>
+</body>
+
 </html>
