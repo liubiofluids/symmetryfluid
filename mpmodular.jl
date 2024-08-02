@@ -165,7 +165,7 @@ end
 #    end
 #end
 
-@everywhere function thedisplayfunction(theimagearray, myflags, clickedlocation, r, imageanalysisparameters)
+@everywhere function thedisplayfunction(theimagearray, myflags, clickedlocation, r, imageanalysisparameters, dest)
     #println("Beginning the display function")
     img = Observable(theimagearray)
     #println("Made my makie observable")
@@ -205,12 +205,17 @@ end
     mytrackedpointvar = scatter!(mytrackedpoint, markersize=5, color=:red, alpha=0.5)
     delete!(imgplot.axis.scene, mytrackedpointvar)
 
+    mydestinationpoint = Point2f[(dest[1],dest[2])]
+    mydestinationpointvar = scatter!(mydestinationpoint,markersize=5,color=:green,alpha=0.5)
+    delete!(imgplot.axis.scene, mydestinationpointvar)
+
     while myflags[3] == 1
         img[] = theimagearray
         if myflags[6] == 1
             if oldtrackingstate == 1
                 delete!(imgplot.axis.scene, mypolyaoivar)
                 delete!(imgplot.axis.scene, mytrackedpointvar)
+                delete!(imgplot.axis.scene,mydestinationpointvar)
             end
 
             @. clipsize = Int(floor([imageanalysisparameters[1], imageanalysisparameters[2]]))
@@ -225,12 +230,16 @@ end
             #println(mytrackedpoint)
             mytrackedpointvar = scatter!(mytrackedpoint, markersize=5, color=:red, alpha=0.5)
 
+            mydestinationpoint = Point2f[(dest[1],dest[2])]
+            mydestinationpointvar = scatter!(mydestinationpoint,markersize=5,color=:green,alpha=0.5)
+
             if oldtrackingstate == 0
                 oldtrackingstate = 1
             end
         elseif myflags[6] == 0 && oldtrackingstate == 1
             delete!(imgplot.axis.scene, mypolyaoivar)
             delete!(imgplot.axis.scene, mytrackedpointvar)
+            delete!(imgplot.axis.scene,mydestinationpointvar)
             oldtrackingstate = 0
         end
         sleep(0)
@@ -392,7 +401,7 @@ end
     end
 end
 
-@everywhere function thepressurecruncher(myflags, mypressurecruncherarray, mymodeamounts, mymodescalingamounts, myportassignments, combinedcrunchmodeamounts, landmarksarray, instructionarray, customcrunchmetadata, r, trackplanescale, custommodescale, customportscale, instructionportarray, landmarksportarray, customportcrunchmetadata,trackcoords)
+@everywhere function thepressurecruncher(myflags, mypressurecruncherarray, mymodeamounts, mymodescalingamounts, myportassignments, combinedcrunchmodeamounts, landmarksarray, instructionarray, customcrunchmetadata, r, trackplanescale, custommodescale, customportscale, instructionportarray, landmarksportarray, customportcrunchmetadata,trackcoords,dest)
     xflow = (3^(-1 / 2)) * SA_F64[1, 0.5, -0.5, -1, -0.5, 0.5, 0.0, 0.0]
     yflow = (3^(-1 / 2)) * 2 * (1 / 2) * SA_F64[0, 1, 1, 0, -1, -1, 0.0, 0.0]
     zflow = (3^(-1 / 2)) * (6^(1 / 2)) * (6^(-1 / 2)) * SA_F64[-1, 1, -1, 1, -1, 1, 0.0, 0.0]
@@ -417,6 +426,9 @@ end
     while myflags[5] == 1
         if myflags[7] == 1 && myflags[6] == 1
             thefancypants!((time() - starttime) % landmarksarray[1, customcrunchmetadata[1]+1], thefancypantsarray, instructionarray, landmarksarray, thefancypantspos, [0 1])
+            @fastmath @inbounds @simd for posindex in eachindex(dest)
+                dest[posindex]=clamp(Int(floor(thefancypantspos[posindex])),1,2048)
+            end
             if rollingcrunchtimeindex == 100
                 newcrunchtime = time()
                 avgcrunchtime = (newcrunchtime - startcrunch) / 100
@@ -520,7 +532,7 @@ end
     open(fid -> serialize(fid, myobject), mypath, "w")
 end
 
-@everywhere function thecamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber)
+@everywhere function thepointgreycamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber)
     println("I'm about to list the cameras")
     camlist = CameraList()
     cam = camlist[0]
@@ -717,7 +729,10 @@ function therunner()
     myoffsetpressure = SharedVector{Float64}(8)
     myportscaling = SharedVector{Float64}(8)
     myportscaling .= 1.00
+
+    cameraimagesharedarrays=Vector()
     theimagearray = SharedArray{UInt8}((2048, 2048))
+
     myflags = SharedVector{UInt8}(13)
     mypressurecruncherarray = SharedArray{Float64}(8)
     mymodeamounts = SharedVector{Float64}(6)
@@ -738,6 +753,8 @@ function therunner()
 
     r = SharedVector{Int}(2)
     r .= [1024, 1024]
+    dest = SharedVector{Int}(3)
+    dest.=[1024,1024,0]
     clickedlocation = SharedVector{Int}(2)
     clickedlocation .= 0
     trackplanescale = SharedVector{Float64}(2)
@@ -905,7 +922,7 @@ function therunner()
         if (mycurrentcrunchstate) && (oldcrunchstate == 0)
             println("I'm about to start the new crunch process")
             myflags[5] = 1
-            push!(crunchfutures, @spawnat :any thepressurecruncher(myflags, mypressurecruncherarray, mymodeamounts, mymodescalingamounts, myportassignments, combinedcrunchmodeamounts, landmarksarray, instructionarray, customcrunchmetadata, r, trackplanescale, custommodescale, customportscale, instructionportarray, landmarksportarray, customportcrunchmetadata,trackcoords))
+            push!(crunchfutures, @spawnat :any thepressurecruncher(myflags, mypressurecruncherarray, mymodeamounts, mymodescalingamounts, myportassignments, combinedcrunchmodeamounts, landmarksarray, instructionarray, customcrunchmetadata, r, trackplanescale, custommodescale, customportscale, instructionportarray, landmarksportarray, customportcrunchmetadata,trackcoords,dest))
             println("I've started the new crunch process")
             oldcrunchstate = 1
         elseif (!mycurrentcrunchstate) && (oldcrunchstate == 1)
@@ -971,7 +988,7 @@ function therunner()
             println("I'm about to start the new cam process")
             myflags[2] = 1
             #println("My flag 2 is "*string(myflags[2]))
-            push!(camerafutures, @spawnat :any thecamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber))
+            push!(camerafutures, @spawnat :any thepointgreycamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber))
             println("I've started the new cam process")
             oldcamstate = 1
         elseif (!mycurrentcamstate) && (oldcamstate == 1)
@@ -984,7 +1001,7 @@ function therunner()
         if (mycurrentdispstate) && (olddispstate == 0)
             println("I'm about to start the new disp process")
             myflags[3] = 1
-            push!(displayfutures, @spawnat :any thedisplayfunction(theimagearray, myflags, clickedlocation, r, imageanalysisparameters))
+            push!(displayfutures, @spawnat :any thedisplayfunction(theimagearray, myflags, clickedlocation, r, imageanalysisparameters,dest))
             println("I've started the new disp process")
             olddispstate = 1
         elseif (!mycurrentdispstate) && (olddispstate == 1)
