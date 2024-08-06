@@ -723,8 +723,6 @@ end
 end
 
 function therunner()
-    #@everywhere myreadpressure=Array{Float64}(undef,4)
-    #@everywhere elveflowkeepgoingflag=1
     myreadpressure = SharedVector{Float64}(8)
     myoffsetpressure = SharedVector{Float64}(8)
     myportscaling = SharedVector{Float64}(8)
@@ -774,9 +772,6 @@ function therunner()
 
     squishparameters = SharedVector{Float64}(2)
     squishparameters .= [50, 0]
-
-    #myflags[1]=1
-    #mygui = @spawnat :any myguifunc(myflags,myreadpressure,mysetpressure,theimagearray)
 
     pumpfutures = Vector()
     crunchfutures = Vector()
@@ -987,7 +982,6 @@ function therunner()
         if (mycurrentcamstate) && (oldcamstate == 0)
             println("I'm about to start the new cam process")
             myflags[2] = 1
-            #println("My flag 2 is "*string(myflags[2]))
             push!(camerafutures, @spawnat :any thepointgreycamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber))
             println("I've started the new cam process")
             oldcamstate = 1
@@ -1081,19 +1075,10 @@ function therunner()
             trackcoords[1]=1
             trackcoords[2]=2
         end
-        #if (mycurrenttextcustom!=oldtextcustom)
-        #    oldtextcustom=mycurrenttextcustom
-        #    println("I'm about to parse")
-        #    println(mycurrenttextcustom)
-        #    eval(Meta.parse(mycurrenttextcustom))
-        #    println("I've parsed")
-        #end
         sleep(0.1)
     end
     myflags .= 0
 
-    #myelveflow = @spawnat :any myelveflowfunc(myflags,myreadpressure,mysetpressure)
-    #fetch(mygui)
     if length(pumpfutures) > 0
         fetch(pumpfutures[end])
     end
