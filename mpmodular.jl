@@ -491,41 +491,49 @@ end
 
     pressformat(x) = @sprintf("%.13f", x)
     while myflags[1] == 1
-        OB1_Get_Press(Instr_ID[], 1, 1, Calib, Pressure, 1000)
-        myreadpressure[1] = Pressure[]
-        OB1_Get_Press(Instr_ID[], 2, 0, Calib, Pressure, 1000)
-        myreadpressure[2] = Pressure[]
-        OB1_Get_Press(Instr_ID[], 3, 0, Calib, Pressure, 1000)
-        myreadpressure[3] = Pressure[]
-        OB1_Get_Press(Instr_ID[], 4, 0, Calib, Pressure, 1000)
-        myreadpressure[4] = Pressure[]
-
-        OB1_Get_Press(Instr_ID2[], 1, 1, Calib2, Pressure, 1000)
-        myreadpressure[5] = Pressure[]
-        OB1_Get_Press(Instr_ID2[], 2, 0, Calib2, Pressure, 1000)
-        myreadpressure[6] = Pressure[]
-        OB1_Get_Press(Instr_ID2[], 3, 0, Calib2, Pressure, 1000)
-        myreadpressure[7] = Pressure[]
-        OB1_Get_Press(Instr_ID2[], 4, 0, Calib2, Pressure, 1000)
-        myreadpressure[8] = Pressure[]
-
         timetowrite = time()
-        @fastmath @inbounds @simd for theport in 1:8
-            Pressurestoset[theport] = clamp(myportscaling[theport] * (myoffsetpressure[theport] + mypressurecruncherarray[theport]), -maxabsp[1], maxabsp[1]) + (rand([-1 1]) * 0.01)
-        end
-        # Pressurestoset[1:4].=clamp.(myportscaling[1:4].*(myoffsetpressure[1:4].+mypressurecruncherarray[1:4]),-maxabsp[1],maxabsp[1]).+(rand([-1 1],4).*0.01)
-        # Pressurestoset[5:8].=clamp.(myportscaling[5:8].*(myoffsetpressure[5:8].+mypressurecruncherarray[5:8]),-maxabsp[1],maxabsp[1]).+(rand([-1 1],4).*0.01)
-        OB1_Set_All_Press(Instr_ID[], Pressurestoset[1:4], Calib, 4, 1000)
-        OB1_Set_All_Press(Instr_ID2[], Pressurestoset[5:8], Calib2, 4, 1000)
+        readpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressure,myreadpressure)
+        calcsetpressure(Pressurestoset,myportscaling,myoffsetpressure,mypressurecruncherarray,maxabsp)
+        setpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressurestoset)
         if myflags[4] == 1
-            open(thetopleveldatadir * lpad(recordfoldernumber[1], 5, "0") * "/press.csv", "a") do file
-                write(file, @sprintf("%.7f", timetowrite) * "," * join(pressformat.(myreadpressure), ",") * "," * join(pressformat.(Pressurestoset), ",") * "\n")
-            end
+            writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,pressformat,myreadpressure,Pressurestoset)
         end
 
     end
     OB1_Destructor(Instr_ID[])
     OB1_Destructor(Instr_ID2[])
+end
+
+@everywhere function readpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressure,myreadpressure)
+        OB1_Get_Press(Instr_ID[], 1, 1, Calib, Pressure, 1000)
+        myreadpressure[1] = Pressure[]
+        for port in 2:4
+            OB1_Get_Press(Instr_ID[], port, 0, Calib, Pressure, 1000)
+            myreadpressure[port] = Pressure[]
+        end
+        OB1_Get_Press(Instr_ID2[], 1, 1, Calib2, Pressure, 1000)
+        myreadpressure[5] = Pressure[]
+        for port in 2:4
+            OB1_Get_Press(Instr_ID2[], port, 0, Calib2, Pressure, 1000)
+            myreadpressure[port+4] = Pressure[]
+        end
+end
+
+@everywhere function calcsetpressure(Pressurestoset,myportscaling,myoffsetpressure,mypressurecruncherarray,maxabsp)
+        @fastmath @inbounds @simd for theport in 1:8
+            Pressurestoset[theport] = clamp(myportscaling[theport] * (myoffsetpressure[theport] + mypressurecruncherarray[theport]), -maxabsp[1], maxabsp[1]) + (rand([-1 1]) * 0.01)#The random term is to compensate for Elveflow poorly stabilizing the pressure
+        end
+end
+
+@everywhere function setpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressurestoset)
+    OB1_Set_All_Press(Instr_ID[], Pressurestoset[1:4], Calib, 4, 1000)
+    OB1_Set_All_Press(Instr_ID2[], Pressurestoset[5:8], Calib2, 4, 1000)
+end
+
+@everywhere function writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,pressformat,myreadpressure,Pressurestoset)
+    open(thetopleveldatadir * lpad(recordfoldernumber[1], 5, "0") * "/press.csv", "a") do file
+        write(file, @sprintf("%.7f", timetowrite) * "," * join(pressformat.(myreadpressure), ",") * "," * join(pressformat.(Pressurestoset), ",") * "\n")
+    end
 end
 
 @everywhere function savebyserial(mypath, myobject)
@@ -564,9 +572,6 @@ end
             for (theelementnumber, theelement) in enumerate(theinstructionelements)
                 landmarksarray[theelementnumber, thelinenumber] = eval(Meta.parse(theelement))
             end
-            #println("crunchcustomparser first lines found")
-            #println(allthelines[thelinenumber])
-            #println(landmarksarray[:,thelinenumber])
         else
             customcrunchmetadata[1] = thelinenumber - 1
             instructionarray[1, thelinenumber-1] = eval(Meta.parse(theinstructionelements[1]))
