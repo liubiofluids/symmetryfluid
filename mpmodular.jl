@@ -488,20 +488,21 @@ end
     OB1_Set_All_Press(Instr_ID[], Pressurestoset[1:4], Calib, 4, 1000)
     OB1_Set_All_Press(Instr_ID2[], Pressurestoset[5:8], Calib, 4, 1000)
     timetowrite = time()
-
-    pressformat(x) = @sprintf("%.13f", x)
     while myflags[1] == 1
         timetowrite = time()
         readpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressure,myreadpressure)
         calcsetpressure(Pressurestoset,myportscaling,myoffsetpressure,mypressurecruncherarray,maxabsp)
         setpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressurestoset)
         if myflags[4] == 1
-            writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,pressformat,myreadpressure,Pressurestoset)
+            writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,myreadpressure,Pressurestoset)
         end
-
     end
     OB1_Destructor(Instr_ID[])
     OB1_Destructor(Instr_ID2[])
+end
+
+@everywhere function pressformat(x)
+    @sprintf("%.13f",x)
 end
 
 @everywhere function readpressure(Instr_ID,Instr_ID2,Calib,Calib2,Pressure,myreadpressure)
@@ -530,7 +531,7 @@ end
     OB1_Set_All_Press(Instr_ID2[], Pressurestoset[5:8], Calib2, 4, 1000)
 end
 
-@everywhere function writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,pressformat,myreadpressure,Pressurestoset)
+@everywhere function writepressure(thetopleveldatadir,recordfoldernumber,timetowrite,myreadpressure,Pressurestoset)
     open(thetopleveldatadir * lpad(recordfoldernumber[1], 5, "0") * "/press.csv", "a") do file
         write(file, @sprintf("%.7f", timetowrite) * "," * join(pressformat.(myreadpressure), ",") * "," * join(pressformat.(Pressurestoset), ",") * "\n")
     end
@@ -538,6 +539,10 @@ end
 
 @everywhere function savebyserial(mypath, myobject)
     open(fid -> serialize(fid, myobject), mypath, "w")
+end
+
+@everywhere function thecameraspawner(myflags,thetopleveldatadir,recordfoldernumber)
+
 end
 
 @everywhere function thepointgreycamerafunction(theimagearray, myflags, thetopleveldatadir, recordfoldernumber)
