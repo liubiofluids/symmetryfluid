@@ -744,6 +744,35 @@ end
     open(fid -> serialize(fid, myobject), mypath, "w")
 end
 
+@everywhere function pointgreycameraconfiguration(cam)
+    acquisitionmode!(cam, "Continuous")
+    buffermode!(cam, "NewestFirst")
+    pixelformat!(cam, "Mono8")
+end
+@everywhere function saveimage!(
+    theimagearray,
+    imagefromcamera,
+    imid,
+    imtimestamp,
+    thetopleveldatadir,
+    recordfoldernumber,
+)
+    #jldsave(@sprintf("%.9f",time())*"_"*string(imid)*"_"*string(imtimestamp)*".jld2";theimagearray) #Apparently JLD2 is slow
+    copyto!(theimagearray, imagefromcamera)
+    savebyserial(
+        thetopleveldatadir *
+        lpad(recordfoldernumber[1], 5, "0") *
+        "/cam0/" *
+        @sprintf("%.9f", time()) *
+        "_" *
+        string(imid) *
+        "_" *
+        string(imtimestamp) *
+        ".slz",
+        imagefromcamera,
+    ) #Apparently serializing is fast, but it needs an actual array to work with, otherwise serializing will just store what appears to be a pointer to the data in memory, and once the processes have ended then all that goes away.
+end
+
 @everywhere function thepointgreycamerafunction(
     theimagearray,
     cameraflags,
@@ -752,29 +781,31 @@ end
 )
     camlist = CameraList()
     cam = camlist[0]
-    acquisitionmode!(cam, "Continuous")
-    buffermode!(cam, "NewestFirst")
-    pixelformat!(cam, "Mono8")
+    pointgreycameraconfiguration(cam)
+    runcamera!(cam, cameraflags, theimagearray, thetopleveldatadir, recordfoldernumber)
+end
+
+@everywhere function runcamera(
+    cam,
+    cameraflags,
+    theimagearray,
+    thetopleveldatadir,
+    recordfoldernumber,
+)
     start!(cam)
     println("The camera is starting")
     imagefromcamera = Array{UInt8,2}(undef, 2048, 2048)
     while cameraflags[1] == 1
         imid, imtimestamp, imexposure = getimage!(cam, imagefromcamera; normalize = false)
-        copyto!(theimagearray, imagefromcamera)
         if cameraflags[2] == 1
-            #jldsave(@sprintf("%.9f",time())*"_"*string(imid)*"_"*string(imtimestamp)*".jld2";theimagearray) #Apparently JLD2 is slow
-            savebyserial(
-                thetopleveldatadir *
-                lpad(recordfoldernumber[1], 5, "0") *
-                "/cam0/" *
-                @sprintf("%.9f", time()) *
-                "_" *
-                string(imid) *
-                "_" *
-                string(imtimestamp) *
-                ".slz",
+            saveimage!(
+                theimagearray,
                 imagefromcamera,
-            ) #Apparently serializing is fast, but it needs an actual array to work with, otherwise serializing will just store what appears to be a pointer to the data in memory, and once the processes have ended then all that goes away.
+                imid,
+                imtimestamp,
+                thetopleveldatadir,
+                recordfoldernumber,
+            )
         end
     end
     println("I'm about to stop the camera")
@@ -960,7 +991,41 @@ end
     println("I'm ending my image squish loop")
 end
 
-function therunner()
+@everywhere function custompathplotter(
+    landmarksarray,
+    customcrunchmetadata,
+    instructionarray,
+)
+    timerange = 1:200
+    mytimepoints = (landmarksarray[1, customcrunchmetadata[1]+1] / 200) * collect(timerange)
+    mypositionpoints = Array{Float64,2}(undef, 3, length(timerange))
+    thefancypantspos = MVector{3,Float64}(0, 0, 0)
+    thefancypantsarray = MVector{6,Float64}(0, 0, 0, 0, 0, 0)
+    @fastmath @inbounds for timeindex ∈ timerange
+        thefancypants!(
+            mytimepoints[timeindex] % landmarksarray[1, customcrunchmetadata[1]+1],
+            thefancypantsarray,
+            instructionarray,
+            landmarksarray,
+            thefancypantspos,
+            [0],
+        )
+        @simd for thepos ∈ 1:3
+            mypositionpoints[thepos, timeindex] = thefancypantspos[thepos]
+        end
+    end
+    pathgenplot = scatter(
+        mypositionpoints[1, :],
+        mypositionpoints[2, :],
+        mypositionpoints[3, :],
+        color = timerange,
+        colormap = :rainbow,
+    )
+    display(pathgenplot)
+end
+
+function mpmodularstart()
+    println("Starting mpmodular")
     myreadpressure = SharedVector{Float64}(8)
     myoffsetpressure = SharedVector{Float64}(8)
     myportscaling = SharedVector{Float64}(8)
@@ -1421,33 +1486,7 @@ function therunner()
                 customcrunchmetadata,
             )
             fancypantslandmarks!(instructionarray, landmarksarray, customcrunchmetadata)
-            timerange = 1:200
-            mytimepoints =
-                (landmarksarray[1, customcrunchmetadata[1]+1] / 200) * collect(timerange)
-            mypositionpoints = Array{Float64,2}(undef, 3, length(timerange))
-            thefancypantspos = MVector{3,Float64}(0, 0, 0)
-            thefancypantsarray = MVector{6,Float64}(0, 0, 0, 0, 0, 0)
-            @fastmath @inbounds for timeindex ∈ timerange
-                thefancypants!(
-                    mytimepoints[timeindex] % landmarksarray[1, customcrunchmetadata[1]+1],
-                    thefancypantsarray,
-                    instructionarray,
-                    landmarksarray,
-                    thefancypantspos,
-                    [0],
-                )
-                @simd for thepos ∈ 1:3
-                    mypositionpoints[thepos, timeindex] = thefancypantspos[thepos]
-                end
-            end
-            pathgenplot = scatter(
-                mypositionpoints[1, :],
-                mypositionpoints[2, :],
-                mypositionpoints[3, :],
-                color = timerange,
-                colormap = :rainbow,
-            )
-            display(pathgenplot)
+            custompathplotter(landmarksarray, customcrunchmetadata, instructionarray)
             myflags[7] = 1
             println("I've set up custom crunching")
             oldcrunchcustomstate = 1
@@ -1647,5 +1686,5 @@ function therunner()
     if length(stagefutures) > 0
         fetch(stagefutures[end])
     end
-    println("Pressure pump controller is closed")
+    println("Closing mpmodular")
 end
