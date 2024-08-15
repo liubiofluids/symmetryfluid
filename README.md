@@ -20,7 +20,7 @@ Control suite for driving symmetry based microfluidics device.
 - Elveflow boxes
 - Light for microscope
 2. Turn on positive pressure line to Elveflow boxes
-3. Launch Julia with `julia -p 6` (generally should be the number of cores)
+3. Launch Julia with `julia -p 12` (generally should be the number of cores)
 4. Run `include("C:/path/to/gitrepo/mpmodular.jl")`
 5. Run `mpmodularstart()`
 6. Activate the pressure boxes from the GUI

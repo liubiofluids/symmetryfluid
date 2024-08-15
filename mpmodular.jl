@@ -1041,7 +1041,7 @@ function mpmodularstart()
     mymodescalingamounts = SharedVector{Float64}(3)
     myportassignments = SharedVector{Int}(8)
     maxabsp = SharedVector{Float64}(1)
-    pressurepumpflags = SharedVector{UInt8}(3)
+    pressurepumpflags = SharedVector{UInt8}(4)
     pressurepumpflags .= 0
 
     combinedcrunchmodeamounts = SharedVector{Float64}(6)
