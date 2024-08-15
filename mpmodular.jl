@@ -1024,6 +1024,12 @@ end
     display(pathgenplot)
 end
 
+@everywhere function drainprocessstack!(stack)
+    while !isempty(stack)
+        fetch(pop!(stack))
+    end
+end
+
 function mpmodularstart()
     println("Starting mpmodular")
     myreadpressure = SharedVector{Float64}(8)
@@ -1432,7 +1438,7 @@ function mpmodularstart()
             oldpumpstate = 1
         elseif (!pressurepumpflags[1]) && (oldpumpstate == 1)
             println("I'm fetching the new pump process")
-            fetch(pumpfutures[end])
+            fetch(pop!(pumpfutures))
             println("I've fetched the new pump process")
             oldpumpstate = 0
         end
@@ -1467,7 +1473,7 @@ function mpmodularstart()
         elseif (!mycurrentcrunchstate) && (oldcrunchstate == 1)
             myflags[5] = 0
             println("I'm fetching the new crunch process")
-            fetch(crunchfutures[end])
+            fetch(pop!(crunchfutures))
             println("I've fetched the new crunch process")
             oldcrunchstate = 0
         end
@@ -1541,7 +1547,7 @@ function mpmodularstart()
         elseif (!mycurrentcamstate) && (oldcamstate == 1)
             cameraflags[1] = 0
             println("I'm fetching the new cam process")
-            fetch(camerafutures[end])
+            fetch(pop!(camerafutures))
             println("I've fetched the new cam process")
             oldcamstate = 0
         end
@@ -1564,7 +1570,7 @@ function mpmodularstart()
         elseif (!mycurrentdispstate) && (olddispstate == 1)
             myflags[3] = 0
             println("I'm fetching the new disp process")
-            fetch(displayfutures[end])
+            fetch(pop!(displayfutures))
             println("I've fetched the new disp process")
             olddispstate = 0
         end
@@ -1600,7 +1606,7 @@ function mpmodularstart()
         elseif (!mycurrenttrackingstate) && (oldtrackerstate == 1)
             myflags[6] = 0
             println("I'm fetching the new tracking process")
-            fetch(trackerfutures[end])
+            fetch(pop!(trackerfutures))
             println("I've fetched the new tracking process")
             oldtrackerstate = 0
         end
@@ -1616,7 +1622,7 @@ function mpmodularstart()
         elseif (!mycurrentstagestate) && (oldstagestate == 1)
             myflags[8] = 0
             println("I'm fetching the new stage process")
-            fetch(stagefutures[end])
+            fetch(pop!(stagefutures))
             println("I've fetched the new stage process")
             oldstagestate = 0
         end
@@ -1650,7 +1656,7 @@ function mpmodularstart()
         elseif (!mycurrentsquishdispstate) && (oldsquishdispstate == 1)
             myflags[13] = 0
             println("I'm fetching the new squish disp process")
-            fetch(squishdispfutures[end])
+            fetch(pop!(squishdispfutures))
             println("I've fetched the new squish disp process")
             oldsquishdispstate = 0
         end
@@ -1668,23 +1674,12 @@ function mpmodularstart()
     pressurepumpflags .= 0
     cameraflags .= 0
 
-    if length(pumpfutures) > 0
-        fetch(pumpfutures[end])
-    end
-    if length(crunchfutures) > 0
-        fetch(crunchfutures[end])
-    end
-    if length(camerafutures) > 0
-        fetch(camerafutures[end])
-    end
-    if length(displayfutures) > 0
-        fetch(displayfutures[end])
-    end
-    if length(trackerfutures) > 0
-        fetch(trackerfutures[end])
-    end
-    if length(stagefutures) > 0
-        fetch(stagefutures[end])
-    end
+    drainprocessstack!(pumpfutures)
+    drainprocessstack!(crunchfutures)
+    drainprocessstack!(camerafutures)
+    drainprocessstack!(displayfutures)
+    drainprocessstack!(trackerfutures)
+    drainprocessstack!(stagefutures)
+
     println("Closing mpmodular")
 end
