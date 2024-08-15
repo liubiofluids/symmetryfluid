@@ -1436,7 +1436,7 @@ function mpmodularstart()
             )
             println("I've started the new pump process")
             oldpumpstate = 1
-        elseif (!pressurepumpflags[1]) && (oldpumpstate == 1)
+        elseif (pressurepumpflags[1] == 0) && (oldpumpstate == 1)
             println("I'm fetching the new pump process")
             fetch(pop!(pumpfutures))
             println("I've fetched the new pump process")
