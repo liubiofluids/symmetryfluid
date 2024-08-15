@@ -758,7 +758,7 @@ end
     recordfoldernumber,
 )
     #jldsave(@sprintf("%.9f",time())*"_"*string(imid)*"_"*string(imtimestamp)*".jld2";theimagearray) #Apparently JLD2 is slow
-    copyto!(theimagearray, imagefromcamera)
+    copyto!(imagefromcamera, theimagearray)
     savebyserial(
         thetopleveldatadir *
         lpad(recordfoldernumber[1], 5, "0") *
@@ -796,7 +796,7 @@ end
     println("The camera is starting")
     imagefromcamera = Array{UInt8,2}(undef, 2048, 2048)
     while cameraflags[1] == 1
-        imid, imtimestamp, imexposure = getimage!(cam, imagefromcamera; normalize = false)
+        imid, imtimestamp, imexposure = getimage!(cam, theimagearray; normalize = false)
         if cameraflags[2] == 1
             saveimage!(
                 theimagearray,
