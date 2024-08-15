@@ -1419,7 +1419,7 @@ function mpmodularstart()
             Blink.JSString("""document.getElementById("squishdelaysl").valueAsNumber"""),
         )
 
-        if (pressurepumpflags[1]) && (oldpumpstate == 0)
+        if (pressurepumpflags[1] == 1) && (oldpumpstate == 0)
             println("I'm about to start the new pump process")
             push!(
                 pumpfutures,
