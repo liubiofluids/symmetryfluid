@@ -785,7 +785,7 @@ end
     runcamera!(cam, cameraflags, theimagearray, thetopleveldatadir, recordfoldernumber)
 end
 
-@everywhere function runcamera(
+@everywhere function runcamera!(
     cam,
     cameraflags,
     theimagearray,

@@ -24,7 +24,8 @@ Control suite for driving symmetry based microfluidics device.
 4. Run `include("C:/path/to/gitrepo/mpmodular.jl")`
 5. Run `mpmodularstart()`
 6. Activate the pressure boxes from the GUI
-7. Turn on the vacuum line
+- If loading previous calibration data, select `Pump On`, then open vacuum line
+- If calibrating, select `Calib On`, then `Pump On`, then cap all ports, open vacuum line, then after the prompt hit `Calib ready`
 
 ## Warnings
 
