@@ -1036,7 +1036,7 @@ end
     end
 end
 
-function slztobmp(mytoppath)
+function slztopgm(mytoppath)
     slzfiles = glob(glob"*.slz", mytoppath)
     @showprogress "Saving images" for myslzfile in slzfiles
         Images.save(
