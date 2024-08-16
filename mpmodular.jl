@@ -1038,11 +1038,14 @@ end
 
 function slztopgm(mytoppath)
     slzfiles = glob(glob"*.slz", mytoppath)
-    @showprogress "Saving images" for myslzfile in slzfiles
+    @showprogress @distributed for myslzfile in slzfiles
         Images.save(
-            dirname(myslzfile) * splitext(basename(myslzfile))[1] * ".pgm",
+            dirname(myslzfile) * "/" * splitext(basename(myslzfile))[1] * ".pgm",
             openbyserial(myslzfile),
         )
+    end
+    @showprogress for slzfile in slzfiles
+        rm(slzfile)
     end
 end
 
