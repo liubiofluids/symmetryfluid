@@ -1037,7 +1037,7 @@ end
 end
 
 function slztobmp(mytoppath)
-    slzfiles = glob(fn"slz", mytoppath)
+    slzfiles = glob(glob"*.slz", mytoppath)
     @showprogress "Saving images" for myslzfile in slzfiles
         Images.save(
             dirname(myslzfile) * splitext(basename(myslzfile))[1] * ".pgm",
