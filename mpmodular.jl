@@ -13,7 +13,9 @@ using Distributed
     Images,
     CUDA,
     Makie.GeometryBasics,
-    Dates
+    Dates,
+    Glob,
+    ProgressMeter
 @everywhere Pkg.develop(PackageSpec(path = "C:/Users/Jeremias/.julia/dev/Elveflow"))
 @everywhere Pkg.develop(PackageSpec(path = "C:/Users/Jeremias/.julia/dev/PriorScientific"))
 @everywhere using Elveflow, PriorScientific
@@ -744,6 +746,10 @@ end
     open(fid -> serialize(fid, myobject), mypath, "w")
 end
 
+@everywhere function openbyserial(mypath)
+    open(deserialize, mypath, "r")
+end
+
 @everywhere function pointgreycameraconfiguration(cam)
     acquisitionmode!(cam, "Continuous")
     buffermode!(cam, "NewestFirst")
@@ -1027,6 +1033,16 @@ end
 @everywhere function drainprocessstack!(stack)
     while !isempty(stack)
         fetch(pop!(stack))
+    end
+end
+
+function slztobmp(mytoppath)
+    slzfiles = glob(fn"slz", mytoppath)
+    @showprogress "Saving images" for myslzfile in slzfiles
+        Images.save(
+            dirname(myslzfile) * splitext(basename(myslzfile))[1] * ".pgm",
+            openbyserial(myslzfile),
+        )
     end
 end
 
