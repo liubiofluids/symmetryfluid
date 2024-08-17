@@ -16,6 +16,8 @@ using Distributed
     Dates,
     Glob,
     ProgressMeter
+
+#TODO Remove these two package imports and use proper package imports
 @everywhere Pkg.develop(PackageSpec(path = "C:/Users/Jeremias/.julia/dev/Elveflow"))
 @everywhere Pkg.develop(PackageSpec(path = "C:/Users/Jeremias/.julia/dev/PriorScientific"))
 @everywhere using Elveflow, PriorScientific
@@ -609,7 +611,9 @@ end
     Calib2 = zeros(Float64, 1000)
     if pressurepumpflags[3] == 1
         while pressurepumpflags[4] == 0
-            println("Turn on vacuum to proceed to calibration")
+            println(
+                "Turn on vacuum, cap all the ports, and toggle Calib ready on to proceed to calibration",
+            )
             sleep(5)
         end
         OB1_Calib(Instr_ID[], Calib, 1000)
@@ -1036,6 +1040,8 @@ end
     end
 end
 
+#TODO For now globbing doesn't work recursively, so this function needs top level folders
+#Keep an eye on the github issue: https://github.com/vtjnash/Glob.jl/issues/19
 function slztopgm(mytoppath)
     slzfiles = glob(glob"*.slz", mytoppath)
     @showprogress @distributed for myslzfile in slzfiles
@@ -1063,6 +1069,7 @@ function mpmodularstart()
     pressurepumpflags = SharedVector{UInt8}(4)
     pressurepumpflags .= 0
 
+    #Note: The instruction and landmark arrays have hardcoded lengths of 100 just to ensure reasonable sizes for the array. In the future with more complicated paths they may need to be longer or that code may need to be rewritten.
     combinedcrunchmodeamounts = SharedVector{Float64}(6)
     instructionarray = SharedArray{Float64}((10, 100))
     landmarksarray = SharedArray{Float64}((4, 100))
@@ -1077,6 +1084,7 @@ function mpmodularstart()
     cameraimagesharedarrays = Vector()
     theimagearray = SharedArray{UInt8}((2048, 2048))
 
+    #TODO Remove the myflags with dedicated flag vectors.
     myflags = SharedVector{UInt8}(13)
 
     r = SharedVector{Int}(2)
